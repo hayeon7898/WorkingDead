@@ -56,3 +56,11 @@ spring:
       init:
         mode: always                # 외부 DB에서도 init 실행
         platform: postgresql        # schema-@@platform@@.sql 매핑용
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: true
+  packages-to-scan: com.workingdead

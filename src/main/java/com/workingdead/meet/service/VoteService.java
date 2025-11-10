@@ -2,6 +2,7 @@ package com.workingdead.meet.service;
 
 import com.workingdead.meet.dto.ParticipantDtos;
 import com.workingdead.meet.dto.VoteDtos;
+import com.workingdead.meet.entity.Participant;
 import com.workingdead.meet.entity.Vote;
 import com.workingdead.meet.repository.VoteRepository;
 import jakarta.transaction.Transactional;
@@ -26,9 +27,29 @@ public class VoteService {
     }
 
 
-    public VoteDtos.VoteSummary create(String name) {
+    public VoteDtos.VoteSummary create(VoteDtos.CreateVoteReq req) {
+        //1. Vote c
         String code = genCode(8);
-        Vote v = new Vote(name, code);
+        Vote v = new Vote(req.name(), code);
+
+        // 2. 날짜 범위 설정 (있으면)
+        if (req.startDate() != null && req.endDate() != null) {
+            if (req.endDate().isBefore(req.startDate())) {
+                throw new IllegalArgumentException("endDate must be >= startDate");
+            }
+            v.setDateRange(req.startDate(), req.endDate());
+
+            // 3. 참여자 추가 (있으면)
+            if (req.participantNames() != null && !req.participantNames().isEmpty()) {
+                for (String name : req.participantNames()) {
+                    if (name != null && !name.isBlank()) {
+                        Participant p = new Participant(v, name.trim());
+                        v.getParticipants().add(p);
+                    }
+                }
+            }
+        }
+
         voteRepo.save(v);
         return toSummary(v);
     }

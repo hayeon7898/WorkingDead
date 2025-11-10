@@ -17,6 +17,11 @@ public class SecurityConfig {
                 .formLogin(form -> form.disable())  // 기본 로그인 폼 비활성화
                 .httpBasic(basic -> basic.disable()) // 브라우저 팝업 로그인 비활성화
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(
+                                "/v3/api-docs/**",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html"
+                        ).permitAll()
                         .anyRequest().permitAll()
                 );
 
