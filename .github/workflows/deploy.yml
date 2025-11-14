@@ -58,6 +58,7 @@ jobs:
               exit 1
             fi
 
-            export DB_PASSWORD='${{ secrets.DB_PASSWORD }}'
+            DB_PASSWORD='${{ secrets.DB_PASSWORD }}'
+            echo "DB_PASSWORD length in action: ${#DB_PASSWORD}"
 
             nohup java -jar "$JAR_PATH" > app.log 2>&1 &
