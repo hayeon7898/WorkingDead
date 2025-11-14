@@ -46,18 +46,6 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             cd /home/ubuntu/app
-            
-            pkill -f "java -jar" || true
-            sleep 5
 
-            JAR_PATH=$(ls -t build/libs/*-SNAPSHOT.jar | head -n 1)
-            echo "Using JAR: $JAR_PATH"
-
-            if [ -z "$JAR_PATH" ]; then
-              echo "No JAR found under build/libs"
-              exit 1
-            fi
-
-            export DB_PASSWORD=${{ secrets.DB_PASSWORD }}
-
-            nohup java -jar "$JAR_PATH" > app.log 2>&1 &
+            DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
+              java -jar build/libs/*-SNAPSHOT.jar
