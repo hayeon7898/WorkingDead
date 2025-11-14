@@ -47,5 +47,31 @@ jobs:
           script: |
             cd /home/ubuntu/app
 
+            echo "[deploy] kill old app if exists"
+            pkill -f "java -jar" || true
+            sleep 5
+
+            echo "[deploy] list jars"
+            ls -al build/libs
+
+            JAR_PATH=$(ls -t build/libs/*.jar | head -n 1)
+            echo "[deploy] Using JAR: $JAR_PATH"
+
+            if [ -z "$JAR_PATH" ]; then
+              echo "[deploy] No JAR found under build/libs"
+              exit 1
+            fi
+
+            echo "[deploy] start app with nohup in background"
             DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
-              java -jar build/libs/*-SNAPSHOT.jar
+              nohup java -jar "$JAR_PATH" > app.log 2>&1 &
+
+            sleep 5
+
+            if pgrep -f "java -jar" > /dev/null; then
+              echo "[deploy] Application is running."
+              exit 0
+            else
+              echo "[deploy] Application failed to start."
+              exit 1
+            fi
