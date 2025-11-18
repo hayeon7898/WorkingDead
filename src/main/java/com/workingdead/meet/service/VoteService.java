@@ -65,6 +65,12 @@ public class VoteService {
         return toDetail(v);
     }
 
+    public VoteDtos.VoteDetail getByCode(String code) {
+        Vote v = voteRepo.findByCode(code)
+                .orElseThrow(() -> new NoSuchElementException("vote not found with code: " + code));
+        return toDetail(v);
+    }
+
 
     public VoteDtos.VoteDetail update(Long id, VoteDtos.UpdateVoteReq req) {
         Vote v = voteRepo.findById(id).orElseThrow(() -> new NoSuchElementException("vote not found"));

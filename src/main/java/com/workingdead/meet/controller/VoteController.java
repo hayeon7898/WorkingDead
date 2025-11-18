@@ -26,7 +26,6 @@ public class VoteController {
         }
 
 
-
     @Operation(
             summary = "투표 목록 조회",
             description = "모든 투표 목록을 조회합니다. 각 투표의 기본 정보(id, name, code, adminUrl, shareUrl, startDate, endDate)를 반환합니다." +
@@ -44,6 +43,20 @@ public class VoteController {
     @GetMapping("/{id}")
     public VoteDtos.VoteDetail get(@PathVariable Long id) { return voteService.get(id); }
 
+    @Operation(
+            summary = "공유 코드로 투표 조회",
+            description = "공유 URL의 코드를 통해 투표 정보를 조회합니다. 참여자가 투표에 접근할 때 사용됩니다."
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "조회 성공",
+                    content = @Content(schema = @Schema(implementation = VoteDtos.VoteDetail.class))),
+            @ApiResponse(responseCode = "404", description = "투표를 찾을 수 없음", content = @Content)
+    })
+    @GetMapping("/share/{code}")
+    public ResponseEntity<VoteDtos.VoteDetail> getByShareCode(@PathVariable String code) {
+        VoteDtos.VoteDetail vote = voteService.getByCode(code);
+        return ResponseEntity.ok(vote);
+    }
 
     @Operation(
             summary = "새 투표 생성",
