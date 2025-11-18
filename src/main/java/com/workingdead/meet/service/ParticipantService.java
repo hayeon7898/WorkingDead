@@ -37,6 +37,24 @@ public class ParticipantService {
         return new ParticipantDtos.ParticipantRes(p.getId(), p.getDisplayName(), false);
     }
 
+    public ParticipantDtos.ParticipantRes updateParticipant(Long participantId, ParticipantDtos.UpdateParticipantReq request) {
+        Participant participant = participantRepo.findById(participantId)
+                .orElseThrow(() -> new NoSuchElementException("Participant not found"));
+
+        // displayName 수정 (null이 아닌 경우만)
+        if (request.displayName() != null && !request.displayName().isBlank()) {
+            participant.setDisplayName(request.displayName());
+        }
+
+        Participant saved = participantRepo.save(participant);
+
+        return new ParticipantDtos.ParticipantRes(
+                saved.getId(),
+                saved.getDisplayName(),
+                false
+        );
+    }
+
     @Transactional
     public ParticipantDtos.ParticipantRes submit(Long participantId) {
         Participant participant = participantRepo.findById(participantId)
@@ -204,4 +222,6 @@ public class ParticipantService {
                 priorityInfos
         );
     }
+
+
 }

@@ -68,6 +68,25 @@ public class ParticipantController {
         participantService.remove(participantId);
         return ResponseEntity.noContent().build();
     }
+
+    @Operation(
+            summary = "참여자 정보 수정",
+            description = "참여자의 displayName 등 기본 정보를 수정합니다."
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "참여자 수정 성공",
+                    content = @Content(schema = @Schema(implementation = ParticipantDtos.ParticipantRes.class))),
+            @ApiResponse(responseCode = "404", description = "참여자를 찾을 수 없음", content = @Content)
+    })
+    @PatchMapping("/participants/{participantId}")
+    public ResponseEntity<ParticipantDtos.ParticipantRes> updateParticipant(
+            @PathVariable Long participantId,
+            @Valid @RequestBody ParticipantDtos.UpdateParticipantReq request) {
+
+        ParticipantDtos.ParticipantRes response =
+                participantService.updateParticipant(participantId, request);
+        return ResponseEntity.ok(response);
+    }
     
     @Operation(
             summary = "참여자 목록 조회 (로그인 칩)",
