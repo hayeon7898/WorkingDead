@@ -2,6 +2,8 @@ package com.workingdead.chatbot.command;
 
 import com.workingdead.chatbot.scheduler.WendyScheduler;
 import com.workingdead.chatbot.service.WendyService;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
@@ -35,7 +37,18 @@ public class WendyCommand extends ListenerAdapter {
         this.wendyService = wendyService;
         this.wendyScheduler = wendyScheduler;
     }
-    
+
+    @Override
+    public void onGuildJoin(net.dv8tion.jda.api.events.guild.GuildJoinEvent event) {
+        TextChannel defaultChannel = event.getGuild().getDefaultChannel().asTextChannel();
+        if (defaultChannel != null) {
+            defaultChannel.sendMessage("""
+                안녕하세요! 일정 조율 도우미 웬디가 서버에 합류했어요 :D
+                일정을 조율하려면 채팅에 **'웬디 시작'** 이라고 입력해 주세요!
+                """).queue();
+        }
+    }
+
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
         if (event.getAuthor().isBot()) return;
@@ -176,7 +189,7 @@ public class WendyCommand extends ListenerAdapter {
 
         // 참석자 입력용 엔티티 셀렉트 메뉴 (유저 선택 드롭다운)
         EntitySelectMenu attendeeMenu = EntitySelectMenu.create(ATTENDEE_SELECT_MENU_ID, EntitySelectMenu.SelectTarget.USER)
-                .setPlaceholder("참석자분들을 선택하거나 검색해서 골라주세요")
+                .setPlaceholder("참석자를 선택 / 검색해 주세요.")
                 .setRequiredRange(1, 25)
                 .build();
 
@@ -219,6 +232,23 @@ public class WendyCommand extends ListenerAdapter {
         
         channel.sendMessage(voteUrl).queue();
         wendyScheduler.startSchedule(channel);
+
+
+        // 투표 제한시간(24시간) + 30분 후 자동 종료 스케줄
+        CompletableFuture
+                .delayedExecutor(3 * 60 + 30, TimeUnit.SECONDS)
+                .execute(() -> {
+                    String chId = channel.getId();
+                    // 스케줄러 정리 + 세션 종료
+                    wendyScheduler.stopSchedule(chId);
+                    wendyService.endSession(chId);
+
+                    // 안내 메시지 전송
+                    channel.sendMessage("""
+                        투표 제한 시간이 지나 웬디가 자동으로 종료되었어요 :D
+                        다시 일정 조율이 필요하시면 '웬디 시작'을 입력해 주세요!
+                        """).queue();
+                });
     }
     
     private void handleRevote(TextChannel channel) {
