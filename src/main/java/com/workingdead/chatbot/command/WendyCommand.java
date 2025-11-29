@@ -234,21 +234,21 @@ public class WendyCommand extends ListenerAdapter {
         wendyScheduler.startSchedule(channel);
 
 
-        // 투표 제한시간(24시간) + 30분 후 자동 종료 스케줄
-        CompletableFuture
-                .delayedExecutor(3 * 60 + 30, TimeUnit.SECONDS)
-                .execute(() -> {
-                    String chId = channel.getId();
-                    // 스케줄러 정리 + 세션 종료
-                    wendyScheduler.stopSchedule(chId);
-                    wendyService.endSession(chId);
-
-                    // 안내 메시지 전송
-                    channel.sendMessage("""
-                        투표 제한 시간이 지나 웬디가 자동으로 종료되었어요 :D
-                        다시 일정 조율이 필요하시면 '웬디 시작'을 입력해 주세요!
-                        """).queue();
-                });
+//        // 투표 제한시간(24시간) + 30분 후 자동 종료 스케줄
+//        CompletableFuture
+//                .delayedExecutor(3 * 60 + 30, TimeUnit.SECONDS)
+//                .execute(() -> {
+//                    String chId = channel.getId();
+//                    // 스케줄러 정리 + 세션 종료
+//                    wendyScheduler.stopSchedule(chId);
+//                    wendyService.endSession(chId);
+//
+//                    // 안내 메시지 전송
+//                    channel.sendMessage("""
+//                        투표 제한 시간이 지나 웬디가 자동으로 종료되었어요 :D
+//                        다시 일정 조율이 필요하시면 '웬디 시작'을 입력해 주세요!
+//                        """).queue();
+//                });
     }
     
     private void handleRevote(TextChannel channel) {
