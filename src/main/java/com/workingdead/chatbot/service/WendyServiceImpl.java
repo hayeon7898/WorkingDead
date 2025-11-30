@@ -7,7 +7,6 @@ import com.workingdead.meet.dto.VoteDtos.VoteSummary;
 import com.workingdead.meet.dto.VoteResultDtos.RankingRes;
 import com.workingdead.meet.dto.VoteResultDtos.VoteResultRes;
 import com.workingdead.meet.service.ParticipantService;
-import com.workingdead.meet.service.VoteDateRangeService;
 import com.workingdead.meet.service.VoteResultService;
 import com.workingdead.meet.service.VoteService;
 import java.time.DayOfWeek;

@@ -2,7 +2,6 @@ package com.workingdead.chatbot.scheduler;
 
 import com.workingdead.chatbot.service.WendyNotifier;
 import com.workingdead.chatbot.service.WendyNotifier.RemindTiming;
-import com.workingdead.chatbot.service.WendyService;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import org.springframework.stereotype.Component;
 
@@ -28,22 +27,14 @@ public class WendyScheduler {
         CopyOnWriteArrayList<ScheduledFuture<?>> tasks = new CopyOnWriteArrayList<>();
         
         // 2.3 투표 현황: 10분 후 첫 공유
-        // tasks.add(scheduler.schedule(() -> notifier.shareVoteStatus(channel), 10, TimeUnit.MINUTES));
-        // 2.3 투표 현황: 1분 후 첫 공유 (테스트용)
-        tasks.add(scheduler.schedule(() -> notifier.shareVoteStatus(channel), 20, TimeUnit.SECONDS));
+        tasks.add(scheduler.schedule(() -> notifier.shareVoteStatus(channel), 10, TimeUnit.MINUTES));
 
         // 2.4 미투표자 독촉
-//        tasks.add(scheduler.schedule(() -> notifier.remindNonVoters(channel, RemindTiming.MIN_15), 15, TimeUnit.MINUTES));
-//        tasks.add(scheduler.schedule(() -> notifier.remindNonVoters(channel, RemindTiming.HOUR_1), 1, TimeUnit.HOURS));
-//        tasks.add(scheduler.schedule(() -> notifier.remindNonVoters(channel, RemindTiming.HOUR_6), 6, TimeUnit.HOURS));
-//        tasks.add(scheduler.schedule(() -> notifier.remindNonVoters(channel, RemindTiming.HOUR_12), 12, TimeUnit.HOURS));
-//        tasks.add(scheduler.schedule(() -> notifier.remindNonVoters(channel, RemindTiming.HOUR_24), 24, TimeUnit.HOURS));
-        // 2.4 미투표자 독촉 (테스트용 짧은 간격)
-        tasks.add(scheduler.schedule(() -> notifier.remindNonVoters(channel, RemindTiming.MIN_15), 30, TimeUnit.SECONDS));
-        tasks.add(scheduler.schedule(() -> notifier.remindNonVoters(channel, RemindTiming.HOUR_1), 1, TimeUnit.MINUTES));
-        tasks.add(scheduler.schedule(() -> notifier.remindNonVoters(channel, RemindTiming.HOUR_6), 90, TimeUnit.SECONDS));
-        tasks.add(scheduler.schedule(() -> notifier.remindNonVoters(channel, RemindTiming.HOUR_12), 2, TimeUnit.MINUTES));
-        tasks.add(scheduler.schedule(() -> notifier.remindNonVoters(channel, RemindTiming.HOUR_24), 3, TimeUnit.MINUTES));
+        tasks.add(scheduler.schedule(() -> notifier.remindNonVoters(channel, RemindTiming.MIN_15), 15, TimeUnit.MINUTES));
+        tasks.add(scheduler.schedule(() -> notifier.remindNonVoters(channel, RemindTiming.HOUR_1), 1, TimeUnit.HOURS));
+        tasks.add(scheduler.schedule(() -> notifier.remindNonVoters(channel, RemindTiming.HOUR_6), 6, TimeUnit.HOURS));
+        tasks.add(scheduler.schedule(() -> notifier.remindNonVoters(channel, RemindTiming.HOUR_12), 12, TimeUnit.HOURS));
+        tasks.add(scheduler.schedule(() -> notifier.remindNonVoters(channel, RemindTiming.HOUR_24), 24, TimeUnit.HOURS));
         
         channelTasks.put(channelId, tasks);
         System.out.println("[Scheduler] Schedule started: " + channelId);

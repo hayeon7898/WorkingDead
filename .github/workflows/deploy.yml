@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - feat/#25
 jobs:
   deploy:
     runs-on: ubuntu-latest
